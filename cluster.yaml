@@ -1,0 +1,14 @@
+---
+- hosts: your_target_host
+  become: true
+  tasks:
+    - name: Clone kubespray repository
+      git:
+        repo: https://github.com/kubernetes-sigs/kubespray.git
+        dest: /tmp/kubespray
+        version: v2.21.0
+
+    - name: Clone vars order repository
+      git:
+        repo: 
+        dest: /tmp/kubespray/inventory/
