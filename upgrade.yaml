@@ -10,5 +10,5 @@
 
     - name: Clone vars order repository
       git:
-        repo: 
+        repo: git@github.com:jwklijnsma/inventory-discloud-kubespray.git
         dest: /tmp/kubespray/inventory/
