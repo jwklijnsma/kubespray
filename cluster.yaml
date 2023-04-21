@@ -13,10 +13,5 @@
         dest: /tmp/kubespray
         version: v2.21.0
 
-    - name: Clone vars order repository
-      git:
-        repo: https://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@github.com/jwklijnsma/inventory-discloud-kubespray.git
-        dest: /tmp/kubespray/inventory
-
     - name: Run kubespray playbook
       command: ansible-playbook -i /tmp/kubespray/inventory/inventory.ini /tmp/kubespray/cluster.yml -e kube_version={{ kube_version }} --become -e calico_pool_blocksize={{ calico_pool_blocksize }} -e crio_packages={{ crio_packages }}
