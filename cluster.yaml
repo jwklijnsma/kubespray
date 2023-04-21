@@ -1,6 +1,11 @@
 ---
-- hosts: your_target_host
-  become: true
+ - name: Run local command
+  hosts: localhost
+  connection: local
+  vars:
+    kube_version: v1.25.6
+    calico_pool_blocksize: 24
+    crio_packages: 1.25
   tasks:
     - name: Clone kubespray repository
       git:
@@ -11,4 +16,7 @@
     - name: Clone vars order repository
       git:
         repo: git@github.com:jwklijnsma/inventory-discloud-kubespray.git
-        dest: /tmp/kubespray/inventory/
+        dest: /tmp/kubespray/inventory
+
+    - name: Run kubespray playbook
+      command: ansible-playbook -i /tmp/kubespray/inventory/inventory.ini /tmp/kubespray/cluster.yml -e kube_version={{ kube_version }} --become -e calico_pool_blocksize={{ calico_pool_blocksize }} -e crio_packages={{ crio_packages }}
