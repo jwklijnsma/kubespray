@@ -15,7 +15,7 @@
 
     - name: Clone vars order repository
       git:
-        repo: git@github.com:jwklijnsma/inventory-discloud-kubespray.git
+        repo: https://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@github.com/jwklijnsma/inventory-discloud-kubespray.git
         dest: /tmp/kubespray/inventory
 
     - name: Run kubespray playbook
