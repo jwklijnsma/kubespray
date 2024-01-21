@@ -75,11 +75,11 @@ You will then need to use [bind mounts](https://docs.docker.com/storage/bind-mou
 to access the inventory and SSH key in the container, like this:
 
 ```ShellSession
-git checkout v2.23.1
-docker pull quay.io/kubespray/kubespray:v2.23.1
+git checkout v2.24.0
+docker pull quay.io/kubespray/kubespray:v2.24.0
 docker run --rm -it --mount type=bind,source="$(pwd)"/inventory/sample,dst=/inventory \
   --mount type=bind,source="${HOME}"/.ssh/id_rsa,dst=/root/.ssh/id_rsa \
-  quay.io/kubespray/kubespray:v2.23.1 bash
+  quay.io/kubespray/kubespray:v2.24.0 bash
 # Inside the container you may now run the kubespray playbooks:
 ansible-playbook -i /inventory/inventory.ini --private-key /root/.ssh/id_rsa cluster.yml
 ```
@@ -161,8 +161,8 @@ Note: Upstart/SysV init based OS types are not supported.
 ## Supported Components
 
 - Core
-  - [kubernetes](https://github.com/kubernetes/kubernetes) v1.28.5
-  - [etcd](https://github.com/etcd-io/etcd) v3.5.9
+  - [kubernetes](https://github.com/kubernetes/kubernetes) v1.28.6
+  - [etcd](https://github.com/etcd-io/etcd) v3.5.10
   - [docker](https://www.docker.com/) v20.10 (see note)
   - [containerd](https://containerd.io/) v1.7.11
   - [cri-o](http://cri-o.io/) v1.27 (experimental: see [CRI-O Note](docs/cri-o.md). Only on fedora, ubuntu and centos based OS)
@@ -177,7 +177,7 @@ Note: Upstart/SysV init based OS types are not supported.
   - [weave](https://github.com/weaveworks/weave) v2.8.1
   - [kube-vip](https://github.com/kube-vip/kube-vip) v0.5.12
 - Application
-  - [cert-manager](https://github.com/jetstack/cert-manager) v1.12.6
+  - [cert-manager](https://github.com/jetstack/cert-manager) v1.13.2
   - [coredns](https://github.com/coredns/coredns) v1.10.1
   - [ingress-nginx](https://github.com/kubernetes/ingress-nginx) v1.9.4
   - [krew](https://github.com/kubernetes-sigs/krew) v0.4.4

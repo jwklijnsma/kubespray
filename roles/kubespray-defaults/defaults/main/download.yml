@@ -58,7 +58,7 @@ docker_image_pull_command: "{{ docker_bin_dir }}/docker pull"
 docker_image_info_command: "{{ docker_bin_dir }}/docker images -q | xargs -i {{ '{{' }} docker_bin_dir }}/docker inspect -f {% raw %}'{{ '{{' }} if .RepoTags }}{{ '{{' }} join .RepoTags \",\" }}{{ '{{' }} end }}{{ '{{' }} if .RepoDigests }},{{ '{{' }} join .RepoDigests \",\" }}{{ '{{' }} end }}' {% endraw %} {} | tr '\n' ','"
 nerdctl_image_info_command: "{{ bin_dir }}/nerdctl -n k8s.io images --format '{% raw %}{{ .Repository }}:{{ .Tag }}{% endraw %}' 2>/dev/null | grep -v ^:$ | tr '\n' ','"
 # Using the ctr instead of nerdctl to workdaround the https://github.com/kubernetes-sigs/kubespray/issues/10670
-nerdctl_image_pull_command: "{{ bin_dir }}/ctr -n k8s.io images pull"
+nerdctl_image_pull_command: "{{ bin_dir }}/ctr -n k8s.io images pull{% if containerd_registries_mirrors is defined %} --hosts-dir {{ containerd_cfg_dir }}/certs.d{%- endif -%}"
 crictl_image_info_command: "{{ bin_dir }}/crictl images --verbose | awk -F ': ' '/RepoTags|RepoDigests/ {print $2}' | tr '\n' ','"
 crictl_image_pull_command: "{{ bin_dir }}/crictl pull"
 
@@ -134,9 +134,9 @@ skopeo_version: "v1.13.2"
 kube_major_version: "{{ kube_version | regex_replace('^v([0-9])+\\.([0-9]+)\\.[0-9]+', 'v\\1.\\2') }}"
 
 etcd_supported_versions:
-  v1.28: "v3.5.9"
-  v1.27: "v3.5.9"
-  v1.26: "v3.5.9"
+  v1.28: "v3.5.10"
+  v1.27: "v3.5.10"
+  v1.26: "v3.5.10"
 etcd_version: "{{ etcd_supported_versions[kube_major_version] }}"
 
 crictl_supported_versions:
@@ -314,7 +314,7 @@ ingress_nginx_kube_webhook_certgen_image_repo: "{{ kube_image_repo }}/ingress-ng
 ingress_nginx_kube_webhook_certgen_image_tag: "v20231011-8b53cabe0"
 alb_ingress_image_repo: "{{ docker_image_repo }}/amazon/aws-alb-ingress-controller"
 alb_ingress_image_tag: "v1.1.9"
-cert_manager_version: "v1.12.6"
+cert_manager_version: "v1.13.2"
 cert_manager_controller_image_repo: "{{ quay_image_repo }}/jetstack/cert-manager-controller"
 cert_manager_controller_image_tag: "{{ cert_manager_version }}"
 cert_manager_cainjector_image_repo: "{{ quay_image_repo }}/jetstack/cert-manager-cainjector"
@@ -695,7 +695,7 @@ downloads:
     enabled: "{{ kube_network_plugin == 'cilium' or cilium_deploy_additionally | default(false) | bool }}"
     file: true
     version: "{{ cilium_cli_version }}"
-    dest: "{{ local_release_dir }}/cilium-{{ cilium_cli_version }}-{{ image_arch }}"
+    dest: "{{ local_release_dir }}/cilium-{{ cilium_cli_version }}-{{ image_arch }}.tar.gz"
     sha256: "{{ ciliumcli_binary_checksum }}"
     url: "{{ ciliumcli_download_url }}"
     unarchive: true
