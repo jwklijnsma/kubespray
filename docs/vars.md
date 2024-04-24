@@ -34,10 +34,10 @@ Some variables of note include:
 
 ## Addressing variables
 
-* *ip* - IP to use for binding services (host var)
+* *ip* - IP to use for binding services (host var). This would **usually** be the public ip.
 * *access_ip* - IP for other hosts to use to connect to. Often required when
   deploying from a cloud, such as OpenStack or GCE and you have separate
-  public/floating and private IPs.
+  public/floating and private IPs. This would **usually** be the private ip.
 * *ansible_default_ipv4.address* - Not Kubespray-specific, but it is used if ip
   and access_ip are undefined
 * *ip6* - IPv6 address to use for binding services. (host var)
@@ -220,6 +220,14 @@ Stack](https://github.com/kubernetes-sigs/kubespray/blob/master/docs/dns-stack.m
 
 * *kubelet_cpu_manager_policy* -  If set to `static`, allows pods with certain resource characteristics to be granted increased CPU affinity and exclusivity on the node. And it should be set with `kube_reserved` or `system-reserved`, enable this with the following guide:[Control CPU Management Policies on the Node](https://kubernetes.io/docs/tasks/administer-cluster/cpu-management-policies/)
 
+* *kubelet_cpu_manager_policy_options* -  A dictionary of cpuManagerPolicyOptions to enable. Keep in mind to enable the corresponding feature gates and make sure to pass the booleans as string (i.e. don't forget the quotes)!
+
+```yml
+kubelet_cpu_manager_policy_options:
+    distribute-cpus-across-numa: "true"
+    full-pcpus-only: "true"
+```
+
 * *kubelet_topology_manager_policy* - Control the behavior of the allocation of CPU and Memory from different [NUMA](https://en.wikipedia.org/wiki/Non-uniform_memory_access) Nodes. Enable this with the following guide: [Control Topology Management Policies on a node](https://kubernetes.io/docs/tasks/administer-cluster/topology-manager).
 
 * *kubelet_topology_manager_scope* - The Topology Manager can deal with the alignment of resources in a couple of distinct scopes: `container` and `pod`. See [Topology Manager Scopes](https://kubernetes.io/docs/tasks/administer-cluster/topology-manager/#topology-manager-scopes).
@@ -272,6 +280,11 @@ node_taints:
   * `audit_webhook_batch_max_size`: 100
   * `audit_webhook_batch_max_wait`: 1s
 * *kubectl_alias* - Bash alias of kubectl to interact with Kubernetes cluster much easier.
+
+* *remove_anonymous_access* - When set to `true`, removes the `kubeadm:bootstrap-signer-clusterinfo` rolebinding created by kubeadm.
+  By default, kubeadm creates a rolebinding in the `kube-public` namespace which grants permissions to anonymous users. This rolebinding allows kubeadm to discover and validate cluster information during the join phase.
+  In a nutshell, this option removes the rolebinding after the init phase of the first control plane node and then configures kubeadm to use file discovery for the join phase of other nodes.
+  This option does not remove the anonymous authentication feature of the API server.
 
 ### Custom flags for Kube Components
 
